@@ -42,7 +42,7 @@ The script does the below, in that order:
      it as its gateway.
   8. Associates the private network interface to the router.
   9. Adds Neutron security group rules for this test tenant for ICMP and
-     Ping.
+     SSH.
 
 
 NOTE: Since the shell script is executed in a subprocess (of the parent
