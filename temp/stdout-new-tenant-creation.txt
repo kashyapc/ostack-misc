@@ -1,0 +1,145 @@
+[root@node1-controller ~(keystone_admin)]$ ./create-new-tenant-network.sh    \
+>                               demoten1 tuser1    \
+>                               21.0.0.0 trouter1  \
+>                               priv-net1 priv-subnet1
++ '[' 6 -ne 6 ']'
++ source keystonerc_admin
+++ export OS_USERNAME=admin
+++ OS_USERNAME=admin
+++ export OS_TENANT_NAME=admin
+++ OS_TENANT_NAME=admin
+++ export OS_PASSWORD=fedora
+++ OS_PASSWORD=fedora
+++ export OS_AUTH_URL=http://192.169.142.49:35357/v2.0/
+++ OS_AUTH_URL=http://192.169.142.49:35357/v2.0/
+++ export 'PS1=[\u@\h \W(keystone_admin)]$ '
+++ PS1='[\u@\h \W(keystone_admin)]$ '
++ tenantname=demoten1
++ username=tuser1
++ subnetspace=21.0.0.0
++ routername=trouter1
++ privnetname=priv-net1
++ privsubnetname=priv-subnet1
++ keystone tenant-create --name demoten1
++-------------+----------------------------------+
+|   Property  |              Value               |
++-------------+----------------------------------+
+| description |                                  |
+|   enabled   |               True               |
+|      id     | 42c7772a1307490f86b8cb9da90fe704 |
+|     name    |             demoten1             |
++-------------+----------------------------------+
++ keystone user-create --name tuser1 --pass fedora
++----------+----------------------------------+
+| Property |              Value               |
++----------+----------------------------------+
+|  email   |                                  |
+| enabled  |               True               |
+|    id    | 2948fd330b66440a9fd37ee6dbaa15b1 |
+|   name   |              tuser1              |
++----------+----------------------------------+
++ keystone user-role-add --user tuser1 --role user --tenant demoten1
++ cat
++ source keystonerc_tuser1
+++ export OS_USERNAME=tuser1
+++ OS_USERNAME=tuser1
+++ export OS_TENANT_NAME=demoten1
+++ OS_TENANT_NAME=demoten1
+++ export OS_PASSWORD=fedora
+++ OS_PASSWORD=fedora
+++ export OS_AUTH_URL=http://localhost:5000/v2.0/
+++ OS_AUTH_URL=http://localhost:5000/v2.0/
+++ export 'PS1=[\u@\h \W(keystone_tuser1)]$ '
+++ PS1='[\u@\h \W(keystone_tuser1)]$ '
++ neutron net-create priv-net1
+Created a new network:
++----------------+--------------------------------------+
+| Field          | Value                                |
++----------------+--------------------------------------+
+| admin_state_up | True                                 |
+| id             | 7b65a19f-925e-484c-be2b-cfe5b7d44af6 |
+| name           | priv-net1                            |
+| shared         | False                                |
+| status         | ACTIVE                               |
+| subnets        |                                      |
+| tenant_id      | 42c7772a1307490f86b8cb9da90fe704     |
++----------------+--------------------------------------+
++ neutron subnet-create priv-net1 21.0.0.0/24 --name priv-subnet1
+Created a new subnet:
++------------------+--------------------------------------------+
+| Field            | Value                                      |
++------------------+--------------------------------------------+
+| allocation_pools | {"start": "21.0.0.2", "end": "21.0.0.254"} |
+| cidr             | 21.0.0.0/24                                |
+| dns_nameservers  |                                            |
+| enable_dhcp      | True                                       |
+| gateway_ip       | 21.0.0.1                                   |
+| host_routes      |                                            |
+| id               | af0394c5-bd10-4815-837a-ff8c4278197b       |
+| ip_version       | 4                                          |
+| name             | priv-subnet1                               |
+| network_id       | 7b65a19f-925e-484c-be2b-cfe5b7d44af6       |
+| tenant_id        | 42c7772a1307490f86b8cb9da90fe704           |
++------------------+--------------------------------------------+
++ neutron router-create trouter1
+Created a new router:
++-----------------------+--------------------------------------+
+| Field                 | Value                                |
++-----------------------+--------------------------------------+
+| admin_state_up        | True                                 |
+| external_gateway_info |                                      |
+| id                    | c9b29468-96c9-40b3-bac8-d77fc07fa919 |
+| name                  | trouter1                             |
+| status                | ACTIVE                               |
+| tenant_id             | 42c7772a1307490f86b8cb9da90fe704     |
++-----------------------+--------------------------------------+
+++ neutron net-list
+++ grep ext
+++ awk '{print $2;}'
++ EXT_NET=3ef89255-6887-443c-88c8-eaeef6bca2fe
+++ neutron subnet-list
+++ grep priv-subnet1
+++ awk '{print $2;}'
++ PRIV_NET=af0394c5-bd10-4815-837a-ff8c4278197b
+++ neutron router-list
+++ grep trouter1
+++ awk '{print $2;}'
++ ROUTER_ID=c9b29468-96c9-40b3-bac8-d77fc07fa919
++ neutron router-gateway-set c9b29468-96c9-40b3-bac8-d77fc07fa919 3ef89255-6887-443c-88c8-eaeef6bca2fe
+Set gateway for router c9b29468-96c9-40b3-bac8-d77fc07fa919
++ neutron router-interface-add c9b29468-96c9-40b3-bac8-d77fc07fa919 af0394c5-bd10-4815-837a-ff8c4278197b
+Added interface 8fdf7149-26a4-41b0-a1ee-84629e10389f to router c9b29468-96c9-40b3-bac8-d77fc07fa919.
++ neutron security-group-rule-create --protocol icmp --direction ingress --remote-ip-prefix 0.0.0.0/0 default
+Created a new security_group_rule:
++-------------------+--------------------------------------+
+| Field             | Value                                |
++-------------------+--------------------------------------+
+| direction         | ingress                              |
+| ethertype         | IPv4                                 |
+| id                | d16f7372-3743-4b63-ae6d-3d615e9ea07b |
+| port_range_max    |                                      |
+| port_range_min    |                                      |
+| protocol          | icmp                                 |
+| remote_group_id   |                                      |
+| remote_ip_prefix  | 0.0.0.0/0                            |
+| security_group_id | a37a5425-20ba-45b0-80a2-9d8bbc311e85 |
+| tenant_id         | 42c7772a1307490f86b8cb9da90fe704     |
++-------------------+--------------------------------------+
++ neutron security-group-rule-create --protocol tcp --port-range-min 22 --port-range-max 22 --direction ingress --remote-ip-prefix 0.0.0.0/0 default
+Created a new security_group_rule:
++-------------------+--------------------------------------+
+| Field             | Value                                |
++-------------------+--------------------------------------+
+| direction         | ingress                              |
+| ethertype         | IPv4                                 |
+| id                | 91d47356-1371-44cd-8d9a-17f9b531bcb5 |
+| port_range_max    | 22                                   |
+| port_range_min    | 22                                   |
+| protocol          | tcp                                  |
+| remote_group_id   |                                      |
+| remote_ip_prefix  | 0.0.0.0/0                            |
+| security_group_id | a37a5425-20ba-45b0-80a2-9d8bbc311e85 |
+| tenant_id         | 42c7772a1307490f86b8cb9da90fe704     |
++-------------------+--------------------------------------+
+[root@node1-controller ~(keystone_admin)]$ 
+
