@@ -1,0 +1,28 @@
+Prepare virtual machines for OpenStack setup
+============================================
+
+Syntax:
+
+    Usage: ./create-ostack-nodes.sh CONTROLLER_NAME CONTROLLER_DISK_SIZE \ 
+                            CONTROLLER_MEM COMPUTE_NAME \ 
+                            COMPUTE_DISK_SIZE COMPUTE_MEM ROOTPW
+
+
+To create two virtual machines, one (Controller node) with 40G disk,
+4096MB memory; and the other (Compute node) with 50G disk, 6144MB memory
+with root password as 'fedora':
+
+    ./create-ostack-nodes.sh controller 40G 4096 compute 50G 6144 fedora
+
+
+The script does the following:
+
+     - Checks if the host has enough free memory of at-least 10G
+     - Creates 2 virtual machines
+     - Imports the virtual machines into libvirt
+     - Checks if nested virtualization is enabled or not
+     - Enables host-passthrough on Compute node
+     - Takes a libvirt QCOW2 internal snapshot of Controller and Compute
+       nodes
+     - Starts the virtual machines
+
