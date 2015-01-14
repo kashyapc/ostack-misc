@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2013 Red Hat Inc.
+# Copyright (C) 2015 Red Hat Inc.
 # Kashyap Chamarthy <kchamart@redhat.com>
 # 
 # # This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@
 
 
 # Source the admin credentials
-source keystonerc_admin
+source $PWD/keystonerc_admin
 
 
 # Positional parameters
@@ -68,7 +68,7 @@ keystone user-create         \
 
 keystone user-role-add       \
          --user $username    \
-         --role user         \
+         --role _member_     \
          --tenant $tenantname
 
 # Create an RC file for this user and source the credentials
