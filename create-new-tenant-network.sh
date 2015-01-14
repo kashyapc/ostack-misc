@@ -82,7 +82,7 @@ EOF
 
 
 # Source this user credentials
-source keystonerc_$username
+source $PWD/keystonerc_$username
 
 
 # Create new private network, subnet for this user tenant
