@@ -58,13 +58,14 @@ privnetname=$5
 privsubnetname=$6
 
 
-# Create a tenant, user and associate a role/tenant to it.
+# Create a tenant, user and associate a role/tenant to it
 keystone tenant-create       \
          --name $tenantname
  
 keystone user-create         \
          --name $username    \
-         --pass fedora
+         --pass fedora       \
+         --tenant $tenantname
 
 keystone user-role-add       \
          --user $username    \
@@ -90,24 +91,24 @@ neutron net-create $privnetname
 
 neutron subnet-create $privnetname \
         $subnetspace/24            \
-        --name $privsubnetname     \
+        --name $privsubnetname
 
 
 # Create a router
 neutron router-create $routername
 
 
-# Associate the router to the external network by setting its gateway.
-# NOTE: This assumes, the external network name is 'ext'
+# Associate the router to the external network by setting its gateway
+# NOTE: This assumes the external network name is 'ext'
 EXT_NET=$(neutron net-list | grep ext | awk '{print $2;}')
 PRIV_NET=$(neutron subnet-list | grep $privsubnetname | awk '{print $2;}')
 ROUTER_ID=$(neutron router-list | grep $routername | awk '{print $2;}')
 
 neutron router-gateway-set  \
-        $ROUTER_ID $EXT_NET \
+        $ROUTER_ID $EXT_NET
 
 neutron router-interface-add \
-        $ROUTER_ID $PRIV_NET \
+        $ROUTER_ID $PRIV_NET
 
 
 # Add Neutron security groups for this test tenant
